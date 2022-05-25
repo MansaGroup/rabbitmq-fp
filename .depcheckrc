@@ -1,0 +1,4 @@
+ignore-bin-package: true
+skip-missing: true
+specials: ["eslint", "husky", "jest", "lint-staged", "prettier"]
+ignores: ["@commitlint/*", "@swc/*", "@types/jest", "@typescript-eslint/*", "jest-extended", "jest-sonar"]

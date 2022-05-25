@@ -15,7 +15,8 @@
     "lint": "eslint \"{src,test}/**/*.{js,ts}\"",
     "test": "jest",
     "test:cov": "jest --coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "depcheck": "depcheck"
   },
   "repository": {
     "type": "git",
@@ -32,12 +33,6 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/MansaGroup/rabbitmq-fp/issues"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   },
   "commitlint": {
     "extends": [
@@ -64,6 +59,7 @@
     "@typescript-eslint/eslint-plugin": "5.26.0",
     "@typescript-eslint/parser": "5.26.0",
     "axios": "0.27.2",
+    "depcheck": "1.4.3",
     "eslint": "8.16.0",
     "husky": "8.0.1",
     "jest": "^28.1.0",
