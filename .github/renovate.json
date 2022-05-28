@@ -1,0 +1,23 @@
+{
+  "extends": ["config:base"],
+  "automerge": true,
+  "dependencyDashboard": false,
+  "enabledManagers": ["github-actions", "npm"],
+  "labels": ["type:dependencies :wrench:"],
+  "prConcurrentLimit": 5,
+  "prCreation": "not-pending",
+  "reviewersFromCodeOwners": true,
+  "reviewersSampleSize": 1,
+  "stabilityDays": 3,
+  "timezone": "Europe/Paris",
+  "updateNotScheduled": false,
+  "vulnerabilityAlerts": {
+    "labels": ["type:dependencies :wrench:", "priority:critical :fire:"]
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "prPriority": -1
+    }
+  ]
+}
