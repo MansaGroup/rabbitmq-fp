@@ -3,5 +3,5 @@
   "compilerOptions": {
     "emitDeclarationOnly": true
   },
-  "files": ["src/index.ts", "index.d.ts"]
+  "files": ["src/index.ts", "src/protocol/mansa-v1.ts"]
 }
