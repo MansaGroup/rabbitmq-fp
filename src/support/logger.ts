@@ -22,7 +22,11 @@ type ConstLogFn = (
 ) => <T>(returnValue: T) => (x: unknown) => T;
 type ConstLogger = Record<`const${Capitalize<LogLevel>}`, ConstLogFn>;
 
-export type FpLogger = Logger & IdLogger & ConstLogger;
+export type FpLogger = Omit<Logger, 'child'> &
+  IdLogger &
+  ConstLogger & {
+    child: (scope: Record<string, unknown>) => FpLogger;
+  };
 
 export function loggerToFpLogger(logger: Logger): FpLogger {
   const wrapIdLogFn: (fn: LogFn) => IdLogFn = (fn: LogFn) => {
@@ -69,5 +73,6 @@ export function loggerToFpLogger(logger: Logger): FpLogger {
     constInfo: wrapConstLogFn(logger.info.bind(logger)),
     constDebug: wrapConstLogFn(logger.debug.bind(logger)),
     constTrace: wrapConstLogFn(logger.trace.bind(logger)),
+    child: (scope) => loggerToFpLogger(logger.child(scope)),
   };
 }

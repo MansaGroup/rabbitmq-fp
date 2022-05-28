@@ -7,7 +7,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2020",
+    "target": "es2021",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -18,5 +18,5 @@
     "strict": true,
     "esModuleInterop": true
   },
-  "includes": ["src/**/*.ts", "test/**/*.ts", "test/jest.d.ts"]
+  "includes": ["src/**/*.ts", "test/**/*.ts", "index.d.ts", "test/jest.d.ts"]
 }

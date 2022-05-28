@@ -4,6 +4,6 @@
 import { createRabbitMQContainer } from './createRabbitMQContainer';
 
 export default async function () {
-  console.log('Starting containers...');
+  console.log('\nStarting containers...');
   globalThis.__CONTAINERS__ = await Promise.all([createRabbitMQContainer()]);
 }

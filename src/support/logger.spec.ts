@@ -2,7 +2,7 @@ import { LoggerInMem } from '../../test/loggerInMem';
 
 import { loggerToFpLogger } from './logger';
 
-describe(loggerToFpLogger.name, () => {
+describe('loggerToFpLogger', () => {
   const testLoggerHaveMethod = (methodName: string) => {
     // G
     const logger = LoggerInMem();

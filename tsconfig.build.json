@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
-  "files": ["src/index.ts"],
   "compilerOptions": {
     "emitDeclarationOnly": true
-  }
+  },
+  "files": ["src/index.ts", "index.d.ts"]
 }
