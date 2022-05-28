@@ -6,12 +6,11 @@ import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 
 import { FpLogger } from '../support/logger';
-import { ErrorEncoder, RabbitMQAdapter, RPCHandler } from '../types';
+import { RabbitMQAdapter, RPCHandler } from '../types';
 
 export function consumeRPC<Payload, ReplyPayload>(
   channel: ChannelWrapper,
   publish: RabbitMQAdapter['publish'],
-  errorEncoder: ErrorEncoder,
   logger: FpLogger,
 ): (
   queueName: string,
@@ -25,10 +24,12 @@ export function consumeRPC<Payload, ReplyPayload>(
         JSON.parse(msg.content.toString()) as Payload,
         queueLogger.idTrace('Received message', 'payload'),
         (payload) => handler(payload, msg),
-        TE.mapLeft(errorEncoder.encode),
         T.chainFirst((either: E.Either<unknown, ReplyPayload>) =>
           publish('', msg.properties.replyTo, E.toUnion(either), {
             correlationId: msg.properties.correlationId,
+            headers: {
+              'x-is-rpc-error': E.isLeft(either) || undefined,
+            },
           }),
         ),
         TE.bimap(

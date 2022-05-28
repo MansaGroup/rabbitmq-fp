@@ -8,7 +8,7 @@ import { LoggerInMem } from '../test/loggerInMem';
 
 import { createRabbitMQAdapter } from './adapter';
 import * as SetupFn from './setup-fn';
-import { ErrorEncoder, RabbitMQAdapter } from './types';
+import { RabbitMQAdapter } from './types';
 
 const EXCHANGE = 'test';
 const QUEUE = 'test.handle-foo-do-something';
@@ -21,10 +21,6 @@ const PAYLOAD = {
 const createAdapter = () => {
   const connectionUrl = getRabbitMQConnectionURI();
   const logger = LoggerInMem();
-  const errorEncoder: ErrorEncoder = {
-    encode: identity,
-    decode: identity,
-  };
   const setupFn: SetupFn.Fn = flow(
     TE.right,
     TE.chain(SetupFn.assertExchange(EXCHANGE)),
@@ -35,7 +31,6 @@ const createAdapter = () => {
   return pipe(
     createRabbitMQAdapter(connectionUrl, setupFn, {
       logger,
-      errorEncoder,
     }),
     TE.chainFirst((adapter) =>
       TE.tryCatch(() => adapter.channel.waitForConnect(), identity),
@@ -70,30 +65,5 @@ describe('createRabbitMQAdapter', () => {
     // T
     expect(E.isRight(reply)).toBe(true);
     await adapter.close();
-  });
-
-  describe('Events', () => {
-    let adapter: RabbitMQAdapter;
-
-    beforeEach(async () => {
-      adapter = await pipe(
-        createAdapter(),
-        T.map((e) => E.toUnion(e) as RabbitMQAdapter),
-      )();
-    });
-
-    afterEach(async () => {
-      await adapter.close();
-    });
-
-    it.todo('should catch when the connection is created');
-
-    it.todo('should catch when the connection fails');
-
-    it.todo('should catch when the connection disconnects');
-
-    it.todo('should catch when the connection is errored');
-
-    it.todo('should catch when the channel is errored');
   });
 });

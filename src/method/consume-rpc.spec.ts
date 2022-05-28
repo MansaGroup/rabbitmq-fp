@@ -2,7 +2,7 @@ import * as amqp from 'amqp-connection-manager';
 import * as amqplib from 'amqplib';
 import { ConsumeMessage } from 'amqplib';
 import * as E from 'fp-ts/Either';
-import { constVoid, identity } from 'fp-ts/lib/function';
+import { constVoid } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/TaskEither';
 import waitForExpect from 'wait-for-expect';
 
@@ -13,7 +13,7 @@ import {
 import { LoggerInMem } from '../../test/loggerInMem';
 import { DIRECT_REPLY_QUEUE_NAME } from '../constants';
 import { loggerToFpLogger } from '../support/logger';
-import { ErrorEncoder, RabbitMQAdapter, RPCHandler } from '../types';
+import { RabbitMQAdapter, RPCHandler } from '../types';
 import { getRandomUUID } from '../utils';
 
 import { consumeRPC as fnConsumeRPC } from './consume-rpc';
@@ -67,16 +67,11 @@ const createConnectionAndChannel = () => {
     });
 
     const logger = loggerToFpLogger(LoggerInMem());
-    const errorEncoder: ErrorEncoder = {
-      encode: identity,
-      decode: identity,
-    };
-
     publishMock = (jest.fn() as typeof publishMock).mockReturnValue(
       TE.right(constVoid()),
     );
 
-    consumeRPC = fnConsumeRPC(channel, publishMock, errorEncoder, logger);
+    consumeRPC = fnConsumeRPC(channel, publishMock, logger);
   });
 
   afterAll(async () => {
@@ -203,7 +198,7 @@ describe('Error Handling - Left returned by handler', () => {
     );
   });
 
-  it('should reply the successful result of the handler', async () => {
+  it('should reply the errored result of the handler', async () => {
     // G
 
     // W
@@ -220,8 +215,40 @@ describe('Error Handling - Left returned by handler', () => {
       '',
       expect.toStartWith(DIRECT_REPLY_QUEUE_NAME),
       ERROR_PAYLOAD,
+      expect.toBeObject(),
+    );
+  });
+
+  it('should send the reply with the correlationId property', () => {
+    // G
+
+    // W
+
+    // T
+    expect(publishMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
       expect.objectContaining({
         correlationId: CORRELATION_ID,
+      }),
+    );
+  });
+
+  it('should send the reply with the x-is-rpc-error header', () => {
+    // G
+
+    // W
+
+    // T
+    expect(publishMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({
+        headers: {
+          'x-is-rpc-error': true,
+        },
       }),
     );
   });

@@ -13,14 +13,10 @@ import { close as fnClose } from './method/close';
 import { consumeEvent as fnConsumeEvent } from './method/consume-event';
 import { consumeRPC as fnConsumeRPC } from './method/consume-rpc';
 import { publish as fnPublish } from './method/publish';
-import { request as fnRequest } from './method/request';
+import { request as fnRequest, RequestCallbackMap } from './method/request';
 import * as SetupFn from './setup-fn';
 import { FpLogger, loggerToFpLogger } from './support/logger';
-import {
-  RabbitMQAdapter,
-  RabbitMQAdapterOptions,
-  RequestCallbackMap,
-} from './types';
+import { RabbitMQAdapter, RabbitMQAdapterOptions } from './types';
 
 function startRPCConsumer(
   channel: ChannelWrapper,
@@ -59,6 +55,7 @@ function startRPCConsumer(
   };
 }
 
+/* istanbul ignore next: hard to test */
 function setupEvents(
   logger: FpLogger,
   connection: AmqpConnectionManager,
@@ -101,17 +98,13 @@ export function createRabbitMQAdapter(
 
     const requestCallbacks: RequestCallbackMap = new Map();
     const publish = fnPublish(channel, logger);
+
     const adapter: RabbitMQAdapter = {
       channel,
       close: fnClose(connection, channel),
       consumeEvent: fnConsumeEvent(channel, logger),
-      consumeRPC: fnConsumeRPC(channel, publish, options.errorEncoder, logger),
-      request: fnRequest(
-        requestCallbacks,
-        publish,
-        options.errorEncoder,
-        logger,
-      ),
+      consumeRPC: fnConsumeRPC(channel, publish, logger),
+      request: fnRequest(requestCallbacks, publish, logger),
       publish,
     };
 

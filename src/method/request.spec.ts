@@ -1,7 +1,7 @@
 import * as amqp from 'amqp-connection-manager';
 import * as amqplib from 'amqplib';
 import * as E from 'fp-ts/Either';
-import { identity, pipe } from 'fp-ts/lib/function';
+import { pipe } from 'fp-ts/lib/function';
 import * as O from 'fp-ts/Option';
 import waitForExpect from 'wait-for-expect';
 
@@ -13,10 +13,10 @@ import { LoggerInMem } from '../../test/loggerInMem';
 import { DIRECT_REPLY_QUEUE_NAME } from '../constants';
 import { TimeoutError } from '../errors';
 import { loggerToFpLogger } from '../support/logger';
-import { ErrorEncoder, RabbitMQAdapter, RequestCallbackMap } from '../types';
+import { RabbitMQAdapter } from '../types';
 
 import { publish as fnPublish } from './publish';
-import { request as fnRequest } from './request';
+import { request as fnRequest, RequestCallbackMap } from './request';
 
 const EXCHANGE = 'test';
 const QUEUE = 'test.handle-foo-do-something';
@@ -56,17 +56,12 @@ const createConnectionAndChannel = () => {
     await channel.waitForConnect();
 
     const logger = loggerToFpLogger(LoggerInMem());
-    const errorEncoder: ErrorEncoder = {
-      encode: identity,
-      decode: identity,
-    };
-
     const publish = fnPublish(channel, logger);
 
     requestCallbackMap = new Map();
     publishSpy = jest.fn(publish);
 
-    request = fnRequest(requestCallbackMap, publishSpy, errorEncoder, logger);
+    request = fnRequest(requestCallbackMap, publishSpy, logger);
   });
 
   afterAll(async () => {

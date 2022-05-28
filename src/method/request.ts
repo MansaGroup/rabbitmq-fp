@@ -7,8 +7,13 @@ import * as TE from 'fp-ts/TaskEither';
 import { DIRECT_REPLY_QUEUE_NAME } from '../constants';
 import { TimeoutError } from '../errors';
 import { FpLogger } from '../support/logger';
-import { ErrorEncoder, RabbitMQAdapter, RequestCallbackMap } from '../types';
+import { RabbitMQAdapter } from '../types';
 import { getRandomUUID } from '../utils';
+
+export type RequestCallbackMap = Map<
+  string,
+  (msg: amqplib.ConsumeMessage) => void
+>;
 
 const DEFAULT_RPC_TIMEOUT_MS = 1000 * 10;
 
@@ -22,7 +27,6 @@ function doesMessageContainsRpcError(msg: amqplib.ConsumeMessage): boolean {
 export function request<Payload, ReplyPayload>(
   requestCallbacks: RequestCallbackMap,
   publish: RabbitMQAdapter['publish'],
-  errorEncoder: ErrorEncoder,
   logger: FpLogger,
 ): (
   exchange: string,
@@ -56,12 +60,13 @@ export function request<Payload, ReplyPayload>(
       TE.taskify<unknown, ReplyPayload>((cb) => {
         requestCallbacks.set(correlationId, (msg) =>
           pipe(
-            T.of(JSON.parse(msg.content.toString()) as ReplyPayload),
+            T.of(JSON.parse(msg.content.toString())),
             T.map(requestLogger.idTrace('Received reply', 'payload')),
-            T.map((payload) =>
-              !doesMessageContainsRpcError(msg)
-                ? cb(undefined, payload)
-                : cb(errorEncoder.decode(payload)),
+            T.map(
+              (payload) =>
+                !doesMessageContainsRpcError(msg)
+                  ? cb(undefined, payload)
+                  : cb(payload), // TODO: unwrap error
             ),
           )(),
         );
