@@ -22,10 +22,9 @@ const createAdapter = () => {
   const connectionUrl = getRabbitMQConnectionURI();
   const logger = LoggerInMem();
   const setupFn: SetupFn.Fn = flow(
-    TE.right,
-    TE.chain(SetupFn.assertExchange(EXCHANGE)),
-    TE.chain(SetupFn.assertQueue(QUEUE)),
-    TE.chain(SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY)),
+    SetupFn.assertExchange(EXCHANGE),
+    SetupFn.assertQueue(QUEUE),
+    SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY),
   );
 
   return pipe(
