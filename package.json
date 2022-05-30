@@ -16,6 +16,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "prepare": "husky install",
+    "prerelease": "npm run build",
     "release": "np --no-tests --message=\"chore: v%s\"",
     "depcheck": "depcheck"
   },
