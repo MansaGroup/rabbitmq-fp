@@ -1,6 +1,6 @@
 {
   "name": "rabbitmq-fp",
-  "version": "0.0.2-0",
+  "version": "0.0.2-1",
   "description": "A straightforward RabbitMQ client with fp-ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
