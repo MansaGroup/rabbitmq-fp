@@ -1,5 +1,5 @@
 import * as E from 'fp-ts/Either';
-import { flow, identity, pipe } from 'fp-ts/lib/function';
+import { flow, pipe } from 'fp-ts/lib/function';
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 
@@ -9,6 +9,7 @@ import { LoggerInMem } from '../test/loggerInMem';
 import { createRabbitMQAdapter } from './adapter';
 import * as SetupFn from './setup-fn';
 import { RabbitMQAdapter } from './types';
+import { waitForConnect } from './utils';
 
 const EXCHANGE = 'test';
 const QUEUE = 'test.handle-foo-do-something';
@@ -31,20 +32,24 @@ const createAdapter = () => {
     createRabbitMQAdapter(connectionUrl, setupFn, {
       logger,
     }),
-    TE.chainFirst((adapter) =>
-      TE.tryCatch(() => adapter.channel.waitForConnect(), identity),
-    ),
+    TE.chainFirst(waitForConnect),
   );
 };
 
 describe('createRabbitMQAdapter', () => {
   it('should create an adapter', async () => {
     // W
+    console.log('creating adapter');
     const adapter = await createAdapter()();
+    console.log('done creating adapter');
 
     // T
+    console.log('ex1');
     expect(E.isRight(adapter)).toBe(true);
+    console.log('done ex1');
+    console.log('close');
     await (E.toUnion(adapter) as RabbitMQAdapter).close();
+    console.log('done close');
   });
 
   it('should create a direct reply queue consumer', async () => {

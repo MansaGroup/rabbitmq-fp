@@ -16,7 +16,6 @@ export function publish<Payload>(
   publishOptions?: amqplib.Options.Publish,
 ) => TE.TaskEither<unknown, void> {
   return (exchange, routingKey, payload, publishOptions) => {
-    const getMessageId = getRandomUUID();
     const publishLogger = logger.child({ exchange, routingKey });
 
     return () => {
@@ -32,7 +31,7 @@ export function publish<Payload>(
               {
                 ...publishOptions,
                 contentType: 'application/json',
-                messageId: getMessageId(),
+                messageId: getRandomUUID(),
               },
             ),
           publishLogger.idError('Failed to publish message', 'err'),
