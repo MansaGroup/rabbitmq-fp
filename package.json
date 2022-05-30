@@ -1,8 +1,9 @@
 {
   "name": "rabbitmq-fp",
-  "version": "0.0.1",
+  "version": "0.0.2-0",
   "description": "A straightforward RabbitMQ client with fp-ts",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": "^16"
   },
@@ -15,6 +16,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "prepare": "husky install",
+    "prepublish": "cp package.json dist/",
     "depcheck": "depcheck"
   },
   "repository": {
