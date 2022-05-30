@@ -39,32 +39,23 @@ const createAdapter = () => {
 describe('createRabbitMQAdapter', () => {
   it('should create an adapter', async () => {
     // W
-    console.log('creating adapter');
     const adapter = await createAdapter()();
-    console.log('done creating adapter');
 
     // T
-    console.log('ex1');
     expect(E.isRight(adapter)).toBe(true);
-    console.log('done ex1');
-    console.log('close');
     await (E.toUnion(adapter) as RabbitMQAdapter).close();
-    console.log('done close');
   });
 
   it('should create a direct reply queue consumer', async () => {
     // G
     const adapter = await pipe(
       createAdapter(),
+      TE.chainFirst((adapter) => adapter.consumeRPC(QUEUE, flow(TE.right))),
       T.map((e) => E.toUnion(e) as RabbitMQAdapter),
-      T.chainFirst((adapter) => adapter.consumeRPC(QUEUE, flow(TE.right))),
     )();
 
     // W
-    const reply = await pipe(
-      adapter.request(EXCHANGE, ROUTING_KEY, PAYLOAD),
-      T.delay(3000),
-    )();
+    const reply = await adapter.request(EXCHANGE, ROUTING_KEY, PAYLOAD)();
 
     // T
     expect(E.isRight(reply)).toBe(true);

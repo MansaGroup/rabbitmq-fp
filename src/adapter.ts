@@ -93,6 +93,7 @@ export function createRabbitMQAdapter(
     const connection = amqpConnect(connectionUrl);
     const channel = connection.createChannel({
       setup: (channel: amqplib.ConfirmChannel) => setupFn(TE.right(channel))(),
+      confirm: true,
     });
     setupEvents(logger, connection, channel);
 
