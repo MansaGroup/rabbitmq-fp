@@ -19,6 +19,7 @@ module.exports = {
   testEnvironment: 'node',
   maxWorkers: 1,
   verbose: true,
+  testTimeout: 10000,
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
