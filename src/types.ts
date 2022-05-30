@@ -23,14 +23,14 @@ export interface RabbitMQAdapter {
   channel: amqp.ChannelWrapper;
   close: TE.TaskEither<unknown, void>;
 
-  consumeEvent<Message>(
+  consumeEvent<Payload>(
     queueName: string,
-    handler: EventHandler<Message>,
+    handler: EventHandler<Payload>,
   ): TE.TaskEither<unknown, void>;
 
-  consumeRPC<Message, Reply>(
+  consumeRPC<Payload, ReplyPayload>(
     queueName: string,
-    handler: RPCHandler<Message, Reply>,
+    handler: RPCHandler<Payload, ReplyPayload>,
   ): TE.TaskEither<unknown, void>;
 
   request<Payload, ReplyPayload>(

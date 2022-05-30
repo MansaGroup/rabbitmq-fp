@@ -1,6 +1,6 @@
 import * as amqplib from 'amqplib';
 import * as E from 'fp-ts/Either';
-import { pipe } from 'fp-ts/lib/function';
+import { flow } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/TaskEither';
 
 import {
@@ -41,13 +41,10 @@ describe('prefetch', () => {
     // G
     const prefetchSpy: jest.SpiedFunction<amqplib.ConfirmChannel['prefetch']> =
       jest.spyOn(channel, 'prefetch');
+    const fn: SetupFn.Fn = flow(SetupFn.prefetch(10));
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.prefetch(10)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // E
     expect(E.isRight(result));
@@ -58,13 +55,10 @@ describe('prefetch', () => {
     // G
     const error = new Error('Failed');
     jest.spyOn(channel, 'prefetch').mockRejectedValue(error);
+    const fn: SetupFn.Fn = flow(SetupFn.prefetch(10));
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.prefetch(10)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // T
     expect(E.isLeft(result)).toBe(true);
@@ -84,13 +78,10 @@ describe('assertExchange', () => {
     const assertExchangeSpy: jest.SpiedFunction<
       amqplib.ConfirmChannel['assertExchange']
     > = jest.spyOn(channel, 'assertExchange');
+    const fn: SetupFn.Fn = flow(SetupFn.assertExchange(EXCHANGE));
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.assertExchange(EXCHANGE)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // E
     expect(E.isRight(result));
@@ -103,13 +94,10 @@ describe('assertExchange', () => {
     // G
     const error = new Error('Failed');
     jest.spyOn(channel, 'assertExchange').mockRejectedValue(error);
+    const fn: SetupFn.Fn = flow(SetupFn.assertExchange(EXCHANGE));
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.assertExchange(EXCHANGE)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // T
     expect(E.isLeft(result)).toBe(true);
@@ -129,14 +117,13 @@ describe('assertQueue', () => {
     const assertQueueSpy: jest.SpiedFunction<
       amqplib.ConfirmChannel['assertQueue']
     > = jest.spyOn(channel, 'assertQueue');
+    const fn: SetupFn.Fn = flow(
+      SetupFn.assertExchange(EXCHANGE),
+      SetupFn.assertQueue(QUEUE),
+    );
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.assertExchange(EXCHANGE)),
-      TE.chain(SetupFn.assertQueue(QUEUE)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // E
     expect(E.isRight(result));
@@ -149,14 +136,13 @@ describe('assertQueue', () => {
     // G
     const error = new Error('Failed');
     jest.spyOn(channel, 'assertQueue').mockRejectedValue(error);
+    const fn: SetupFn.Fn = flow(
+      SetupFn.assertExchange(EXCHANGE),
+      SetupFn.assertQueue(QUEUE),
+    );
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.assertExchange(EXCHANGE)),
-      TE.chain(SetupFn.assertQueue(QUEUE)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // T
     expect(E.isLeft(result)).toBe(true);
@@ -176,15 +162,14 @@ describe('bindQueue', () => {
     const bindQueueSpy: jest.SpiedFunction<
       amqplib.ConfirmChannel['bindQueue']
     > = jest.spyOn(channel, 'bindQueue');
+    const fn: SetupFn.Fn = flow(
+      SetupFn.assertExchange(EXCHANGE),
+      SetupFn.assertQueue(QUEUE),
+      SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY),
+    );
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.assertExchange(EXCHANGE)),
-      TE.chain(SetupFn.assertQueue(QUEUE)),
-      TE.chain(SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // E
     expect(E.isRight(result));
@@ -195,15 +180,14 @@ describe('bindQueue', () => {
     // G
     const error = new Error('Failed');
     jest.spyOn(channel, 'bindQueue').mockRejectedValue(error);
+    const fn: SetupFn.Fn = flow(
+      SetupFn.assertExchange(EXCHANGE),
+      SetupFn.assertQueue(QUEUE),
+      SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY),
+    );
 
     // W
-    const result = await pipe(
-      channel,
-      TE.right,
-      TE.chain(SetupFn.assertExchange(EXCHANGE)),
-      TE.chain(SetupFn.assertQueue(QUEUE)),
-      TE.chain(SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY)),
-    )();
+    const result = await fn(TE.right(channel))();
 
     // T
     expect(E.isLeft(result)).toBe(true);

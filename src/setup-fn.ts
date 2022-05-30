@@ -1,9 +1,8 @@
 import * as amqplib from 'amqplib';
-import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/TaskEither';
 
 export type Fn = (
-  channel: amqplib.ConfirmChannel,
+  channel: TE.TaskEither<unknown, amqplib.ConfirmChannel>,
 ) => TE.TaskEither<unknown, amqplib.ConfirmChannel>;
 
 function tryCatchLike<E, A>(
@@ -20,15 +19,12 @@ function tryCatchLike<E, A>(
 }
 
 export function prefetch(count: number): Fn {
-  return (channel) => {
-    return pipe(
-      tryCatchLike(
-        () => channel.prefetch(count),
-        (err) => err,
-      ),
-      TE.map(() => channel),
-    );
-  };
+  return TE.chainFirst((channel) =>
+    tryCatchLike(
+      () => channel.prefetch(count),
+      (err) => err,
+    ),
+  );
 }
 
 export function assertExchange(
@@ -38,15 +34,12 @@ export function assertExchange(
     durable: true,
   },
 ): Fn {
-  return (channel) => {
-    return pipe(
-      tryCatchLike(
-        () => channel.assertExchange(exchange, type, options),
-        (err) => err,
-      ),
-      TE.map(() => channel),
-    );
-  };
+  return TE.chainFirst((channel) =>
+    tryCatchLike(
+      () => channel.assertExchange(exchange, type, options),
+      (err) => err,
+    ),
+  );
 }
 
 export function assertQueue(
@@ -55,15 +48,12 @@ export function assertQueue(
     durable: true,
   },
 ): Fn {
-  return (channel) => {
-    return pipe(
-      tryCatchLike(
-        () => channel.assertQueue(queue, options),
-        (err) => err,
-      ),
-      TE.map(() => channel),
-    );
-  };
+  return TE.chainFirst((channel) =>
+    tryCatchLike(
+      () => channel.assertQueue(queue, options),
+      (err) => err,
+    ),
+  );
 }
 
 export function bindQueue(
@@ -71,13 +61,10 @@ export function bindQueue(
   exchange: string,
   routingKey: string,
 ): Fn {
-  return (channel) => {
-    return pipe(
-      tryCatchLike(
-        () => channel.bindQueue(queue, exchange, routingKey),
-        (err) => err,
-      ),
-      TE.map(() => channel),
-    );
-  };
+  return TE.chainFirst((channel) =>
+    tryCatchLike(
+      () => channel.bindQueue(queue, exchange, routingKey),
+      (err) => err,
+    ),
+  );
 }
