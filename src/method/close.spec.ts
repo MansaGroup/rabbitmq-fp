@@ -19,7 +19,7 @@ beforeAll(async () => {
   channel = connection.createChannel();
   await channel.waitForConnect();
 
-  close = fnClose(connection, channel);
+  close = fnClose(connection);
 });
 
 afterAll(async () => {

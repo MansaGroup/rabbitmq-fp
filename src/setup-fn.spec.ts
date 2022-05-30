@@ -85,7 +85,7 @@ describe('assertExchange', () => {
 
     // E
     expect(E.isRight(result));
-    expect(assertExchangeSpy).toHaveBeenCalledWith(EXCHANGE, 'direct', {
+    expect(assertExchangeSpy).toHaveBeenCalledWith(EXCHANGE, 'topic', {
       durable: true,
     });
   });

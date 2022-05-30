@@ -4,10 +4,10 @@ import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 
 import { getRabbitMQConnectionURI } from '../test/createRabbitMQContainer';
-import { LoggerInMem } from '../test/loggerInMem';
 
 import { createRabbitMQAdapter } from './adapter';
 import * as SetupFn from './setup-fn';
+import { Logger } from './support/logger';
 import { RabbitMQAdapter } from './types';
 import { waitForConnect } from './utils';
 
@@ -21,7 +21,15 @@ const PAYLOAD = {
 
 const createAdapter = () => {
   const connectionUrl = getRabbitMQConnectionURI();
-  const logger = LoggerInMem();
+  const logger: Logger = {
+    fatal: console.log,
+    error: console.log,
+    warn: console.log,
+    info: console.log,
+    debug: console.log,
+    trace: console.log,
+    child: () => logger,
+  };
   const setupFn: SetupFn.Fn = flow(
     SetupFn.assertExchange(EXCHANGE),
     SetupFn.assertQueue(QUEUE),
