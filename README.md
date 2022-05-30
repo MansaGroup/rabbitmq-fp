@@ -128,6 +128,12 @@ await adapter.publish<Payload>('my-exchange', 'my-routing-key', {
 Now, if we pull everything together, we could have a flow like the
 one from the [`everything-together.ts` example](examples/everything-together.ts).
 
+## Examples
+
+- **[Everything together](examples/everything-together.ts)**: the previous
+  section example in code
+- **[RPC](examples/rpc.ts)**: consume and request over RPC methods
+
 ## License
 
 This project is [MIT licensed](LICENSE.txt).
