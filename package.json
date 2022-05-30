@@ -1,5 +1,5 @@
 {
-  "name": "rabbitmq-fp",
+  "name": "@mansagroup/rabbitmq-fp",
   "version": "0.0.2",
   "description": "A straightforward RabbitMQ client with fp-ts",
   "main": "dist/index.js",
