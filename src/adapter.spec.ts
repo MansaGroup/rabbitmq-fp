@@ -3,9 +3,8 @@ import { flow, pipe } from 'fp-ts/lib/function';
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 
-import { LoggerInMem } from 'test/loggerInMem';
-
 import { getRabbitMQConnectionURI } from '../test/createRabbitMQContainer';
+import { LoggerInMem } from '../test/loggerInMem';
 
 import { createRabbitMQAdapter } from './adapter';
 import * as SetupFn from './setup-fn';
