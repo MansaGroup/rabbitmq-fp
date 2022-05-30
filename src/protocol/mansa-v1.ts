@@ -44,7 +44,7 @@ export function createEnvelopeForPayload<Payload>(
   payload: Payload,
 ): Envelope<Payload> {
   return {
-    uuid: getRandomUUID()(),
+    uuid: getRandomUUID(),
     type,
     version,
     payload,

@@ -27,7 +27,7 @@ const EXCHANGE = 'test';
 const QUEUE = 'test.handle-foo-do-something';
 const ROUTING_KEY = 'test.command.foo.do-something';
 
-const CORRELATION_ID = getRandomUUID()();
+const CORRELATION_ID = getRandomUUID();
 const PAYLOAD = {
   hello: 'world',
 };

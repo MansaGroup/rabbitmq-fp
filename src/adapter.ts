@@ -93,6 +93,7 @@ export function createRabbitMQAdapter(
     const connection = amqpConnect(connectionUrl);
     const channel = connection.createChannel({
       setup: (channel: amqplib.ConfirmChannel) => setupFn(TE.right(channel))(),
+      confirm: true,
     });
     setupEvents(logger, connection, channel);
 
@@ -101,7 +102,7 @@ export function createRabbitMQAdapter(
 
     const adapter: RabbitMQAdapter = {
       channel,
-      close: fnClose(connection, channel),
+      close: fnClose(connection),
       consumeEvent: fnConsumeEvent(channel, logger),
       consumeRPC: fnConsumeRPC(channel, publish, logger),
       request: fnRequest(requestCallbacks, publish, logger),

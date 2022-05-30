@@ -1,5 +1,5 @@
 import * as E from 'fp-ts/Either';
-import { flow, identity, pipe } from 'fp-ts/lib/function';
+import { flow, pipe } from 'fp-ts/lib/function';
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 
@@ -9,6 +9,7 @@ import { LoggerInMem } from '../test/loggerInMem';
 import { createRabbitMQAdapter } from './adapter';
 import * as SetupFn from './setup-fn';
 import { RabbitMQAdapter } from './types';
+import { waitForConnect } from './utils';
 
 const EXCHANGE = 'test';
 const QUEUE = 'test.handle-foo-do-something';
@@ -22,19 +23,16 @@ const createAdapter = () => {
   const connectionUrl = getRabbitMQConnectionURI();
   const logger = LoggerInMem();
   const setupFn: SetupFn.Fn = flow(
-    TE.right,
-    TE.chain(SetupFn.assertExchange(EXCHANGE)),
-    TE.chain(SetupFn.assertQueue(QUEUE)),
-    TE.chain(SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY)),
+    SetupFn.assertExchange(EXCHANGE),
+    SetupFn.assertQueue(QUEUE),
+    SetupFn.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY),
   );
 
   return pipe(
     createRabbitMQAdapter(connectionUrl, setupFn, {
       logger,
     }),
-    TE.chainFirst((adapter) =>
-      TE.tryCatch(() => adapter.channel.waitForConnect(), identity),
-    ),
+    TE.chainFirst(waitForConnect),
   );
 };
 
@@ -52,15 +50,12 @@ describe('createRabbitMQAdapter', () => {
     // G
     const adapter = await pipe(
       createAdapter(),
+      TE.chainFirst((adapter) => adapter.consumeRPC(QUEUE, flow(TE.right))),
       T.map((e) => E.toUnion(e) as RabbitMQAdapter),
-      T.chainFirst((adapter) => adapter.consumeRPC(QUEUE, flow(TE.right))),
     )();
 
     // W
-    const reply = await pipe(
-      adapter.request(EXCHANGE, ROUTING_KEY, PAYLOAD),
-      T.delay(3000),
-    )();
+    const reply = await adapter.request(EXCHANGE, ROUTING_KEY, PAYLOAD)();
 
     // T
     expect(E.isRight(reply)).toBe(true);

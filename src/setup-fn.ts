@@ -29,7 +29,7 @@ export function prefetch(count: number): Fn {
 
 export function assertExchange(
   exchange: string,
-  type = 'direct',
+  type = 'topic',
   options: amqplib.Options.AssertExchange = {
     durable: true,
   },

@@ -42,7 +42,6 @@ export function request<Payload, ReplyPayload>(
     timeout = DEFAULT_RPC_TIMEOUT_MS,
     publishOptions,
   ) => {
-    const getCorrelationId = getRandomUUID();
     const race = T.getRaceMonoid<E.Either<unknown, ReplyPayload>>();
 
     const timeoutTask = (requestLogger: FpLogger) =>
@@ -73,7 +72,7 @@ export function request<Payload, ReplyPayload>(
       })();
 
     return () => {
-      const correlationId = getCorrelationId();
+      const correlationId = getRandomUUID();
       const requestLogger = logger.child({
         exchange,
         routingKey,

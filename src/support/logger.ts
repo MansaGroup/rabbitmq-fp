@@ -28,37 +28,47 @@ export type FpLogger = Omit<Logger, 'child'> &
     child: (scope: Record<string, unknown>) => FpLogger;
   };
 
-export function loggerToFpLogger(logger: Logger): FpLogger {
-  const wrapIdLogFn: (fn: LogFn) => IdLogFn = (fn: LogFn) => {
-    return (msg, idKey, extra) => {
-      return (x) => {
-        fn(msg, {
+function extraIfNotEmpty(extra: ExtraData): ExtraData | undefined {
+  return Object.keys(extra).length > 0 ? extra : undefined;
+}
+
+const wrapIdLogFn: (fn: LogFn) => IdLogFn = (fn: LogFn) => {
+  return (msg, idKey, extra) => {
+    return (x) => {
+      fn(
+        msg,
+        extraIfNotEmpty({
           ...extra,
           ...(idKey && {
             [idKey]: x,
           }),
-        });
-        return x;
-      };
+        }),
+      );
+      return x;
     };
   };
+};
 
-  const wrapConstLogFn: (fn: LogFn) => ConstLogFn = (fn: LogFn) => {
-    return (msg, idKey, extra) => {
-      return (id) => {
-        return (x) => {
-          fn(msg, {
+const wrapConstLogFn: (fn: LogFn) => ConstLogFn = (fn: LogFn) => {
+  return (msg, idKey, extra) => {
+    return (id) => {
+      return (x) => {
+        fn(
+          msg,
+          extraIfNotEmpty({
             ...extra,
             ...(idKey && {
               [idKey]: x,
             }),
-          });
-          return id;
-        };
+          }),
+        );
+        return id;
       };
     };
   };
+};
 
+export function loggerToFpLogger(logger: Logger): FpLogger {
   return {
     ...logger,
     idFatal: wrapIdLogFn(logger.fatal.bind(logger)),
