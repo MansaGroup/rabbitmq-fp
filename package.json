@@ -54,7 +54,7 @@
     "@commitlint/config-conventional": "17.0.0",
     "@mansagroup/eslint-config": "0.0.2-4",
     "@swc/cli": "0.1.57",
-    "@swc/core": "1.2.194",
+    "@swc/core": "1.2.196",
     "@swc/jest": "0.2.21",
     "@types/amqplib": "0.8.2",
     "@types/jest": "27.5.1",
