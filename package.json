@@ -50,8 +50,8 @@
   },
   "homepage": "https://github.com/MansaGroup/rabbitmq-fp#readme",
   "devDependencies": {
-    "@commitlint/cli": "17.0.1",
-    "@commitlint/config-conventional": "17.0.0",
+    "@commitlint/cli": "17.0.2",
+    "@commitlint/config-conventional": "17.0.2",
     "@mansagroup/eslint-config": "0.0.2-4",
     "@swc/cli": "0.1.57",
     "@swc/core": "1.2.196",
