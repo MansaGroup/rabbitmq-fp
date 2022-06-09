@@ -18,6 +18,9 @@
       "mangle": true
     }
   },
+  "module": {
+    "type": "commonjs"
+  },
   "minify": true,
   "sourceMaps": "inline"
 }
