@@ -19,7 +19,7 @@ const DEFAULT_RPC_TIMEOUT_MS = 1000 * 10;
 
 function doesMessageContainsRpcError(msg: amqplib.ConsumeMessage): boolean {
   return (
-    typeof msg.properties.headers['x-is-rpc-error'] === 'boolean' &&
+    typeof msg?.properties?.headers['x-is-rpc-error'] === 'boolean' &&
     msg.properties.headers['x-is-rpc-error'] === true
   );
 }
