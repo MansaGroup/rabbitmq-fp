@@ -1,6 +1,7 @@
 import * as amqplib from 'amqplib';
 import * as E from 'fp-ts/Either';
-import { pipe } from 'fp-ts/lib/function';
+import { constant, pipe } from 'fp-ts/lib/function';
+import * as O from 'fp-ts/Option';
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 
@@ -18,9 +19,13 @@ export type RequestCallbackMap = Map<
 const DEFAULT_RPC_TIMEOUT_MS = 1000 * 10;
 
 function doesMessageContainsRpcError(msg: amqplib.ConsumeMessage): boolean {
-  return (
-    typeof msg?.properties?.headers['x-is-rpc-error'] === 'boolean' &&
-    msg.properties.headers['x-is-rpc-error'] === true
+  return pipe(
+    O.fromNullable(msg.properties.headers),
+    O.chainNullableK((headers) => headers['x-is-rpc-error']),
+    O.map(
+      (isRPCError) => typeof isRPCError === 'boolean' && isRPCError === true,
+    ),
+    O.getOrElse(constant(false)),
   );
 }
 
