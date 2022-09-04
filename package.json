@@ -81,7 +81,7 @@
   },
   "dependencies": {
     "amqp-connection-manager": "4.1.6",
-    "amqplib": "0.10.2"
+    "amqplib": "0.10.3"
   },
   "publishConfig": {
     "access": "public"
