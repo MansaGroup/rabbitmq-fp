@@ -55,7 +55,7 @@
     "@mansagroup/eslint-config": "0.0.2-4",
     "@swc/cli": "0.1.57",
     "@swc/core": "1.2.197",
-    "@swc/jest": "0.2.22",
+    "@swc/jest": "0.2.23",
     "@types/amqplib": "0.8.2",
     "@types/jest": "28.1.8",
     "@typescript-eslint/eslint-plugin": "5.27.0",
