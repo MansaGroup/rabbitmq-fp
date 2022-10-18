@@ -52,7 +52,7 @@
   "devDependencies": {
     "@commitlint/cli": "17.1.2",
     "@commitlint/config-conventional": "17.1.0",
-    "@mansagroup/eslint-config": "0.0.2-4",
+    "@mansagroup/eslint-config": "0.0.2-5",
     "@swc/cli": "0.1.57",
     "@swc/core": "1.2.197",
     "@swc/jest": "0.2.23",
