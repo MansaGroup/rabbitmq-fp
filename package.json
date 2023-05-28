@@ -80,7 +80,7 @@
     "fp-ts": ">=2"
   },
   "dependencies": {
-    "amqp-connection-manager": "4.1.7",
+    "amqp-connection-manager": "4.1.13",
     "amqplib": "0.10.3"
   },
   "publishConfig": {
